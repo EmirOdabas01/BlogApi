@@ -10,12 +10,13 @@ namespace BlogApi.Entities.Models
     public class Post
     {
         public int Id { get; set; }
-        public Category PostCategory{ get;set; }
+        public PostType PostCategory{ get;set; }
         public required string Header { get; set; }
-        public required string Content { get; set; }
-        public ICollection<Image> Images { get; set; } = new List<Image>();
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         public int UserId { get; set; }
         public required User User { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public ICollection<PostBlock> Blocks { get; set; } = new List<PostBlock>();
     }
 }

@@ -15,6 +15,6 @@ namespace BlogApi.DAL
 
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Image> Images { get; set; }
+        public DbSet<PostBlock> PostBLocks { get; set; }
     }
 }

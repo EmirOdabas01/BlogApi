@@ -11,6 +11,7 @@ namespace BlogApi.Entities.Models
         public int Id { get; set; }
         public required string UserName { get; set; }
         public required string PasswordHash { get; set; }
+
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public byte[] ProfileImage { get; set; } = null!;
     }

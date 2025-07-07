@@ -1,7 +1,7 @@
 ﻿
 namespace BlogApi.Entities.Enums;
 
-public enum Category
+public enum PostType
 {
     About,
     Project,
