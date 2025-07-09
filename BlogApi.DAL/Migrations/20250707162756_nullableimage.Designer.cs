@@ -4,6 +4,7 @@ using BlogApi.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogApi.DAL.Migrations
 {
     [DbContext(typeof(BlogApiContext))]
-    partial class BlogApiContextModelSnapshot : ModelSnapshot
+    [Migration("20250707162756_nullableimage")]
+    partial class nullableimage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,12 @@ namespace BlogApi.DAL.Migrations
                     b.Property<int>("PostCategory")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -99,6 +107,17 @@ namespace BlogApi.DAL.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BlogApi.Entities.Models.Post", b =>
+                {
+                    b.HasOne("BlogApi.Entities.Models.User", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BlogApi.Entities.Models.PostBlock", b =>
                 {
                     b.HasOne("BlogApi.Entities.Models.Post", "Post")
@@ -113,6 +132,11 @@ namespace BlogApi.DAL.Migrations
             modelBuilder.Entity("BlogApi.Entities.Models.Post", b =>
                 {
                     b.Navigation("Blocks");
+                });
+
+            modelBuilder.Entity("BlogApi.Entities.Models.User", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

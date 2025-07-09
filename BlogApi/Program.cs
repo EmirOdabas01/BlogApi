@@ -15,7 +15,7 @@ builder.Services.AddDbContext<BlogApiContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

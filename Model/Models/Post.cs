@@ -13,9 +13,6 @@ namespace BlogApi.Entities.Models
         public PostType PostCategory{ get;set; }
         public required string Header { get; set; }
 
-        public int UserId { get; set; }
-        public required User User { get; set; }
-
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public ICollection<PostBlock> Blocks { get; set; } = new List<PostBlock>();
     }
