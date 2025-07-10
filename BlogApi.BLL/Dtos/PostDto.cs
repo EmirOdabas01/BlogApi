@@ -13,7 +13,7 @@ namespace BlogApi.BLL.Dtos
         public int? Id { get; set; }
         public PostType PostCategory { get; set; }
         public string Header { get; set; } = String.Empty;
-        public int UserId { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public List<PostBlockDto> Blocks { get; set; } = null!;
     }
 }
+

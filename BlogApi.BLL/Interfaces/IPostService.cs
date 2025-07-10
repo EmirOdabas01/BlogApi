@@ -10,6 +10,10 @@ namespace BlogApi.BLL.Interfaces
 {
     public interface IPostService
     {
-        
+        Task<List<Post>> GetAllPosts();
+        Task<Post?> GetPostById(int id);
+        Task<bool> AddPost(Post entity);
+        Task<bool> UpdatePost(Post entity);
+        Task<bool> RemovePost(Post entity);
     }
 }
