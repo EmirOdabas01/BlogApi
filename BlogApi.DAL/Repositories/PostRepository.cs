@@ -28,7 +28,7 @@ namespace BlogApi.DAL.Repositories
 
         public async Task<List<Post>> GetAllPosts()
         {
-            return await _postDbSet.ToListAsync();
+            return await _postDbSet.Include(p => p.Blocks).ToListAsync();
         }
 
         public async Task<Post?> GetPostById(int id)

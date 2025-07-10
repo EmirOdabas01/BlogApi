@@ -12,8 +12,8 @@ namespace BlogApi.BLL.Interfaces
     {
         Task<List<Post>> GetAllPosts();
         Task<Post?> GetPostById(int id);
-        Task<bool> AddPost(Post entity);
-        Task<bool> UpdatePost(Post entity);
-        Task<bool> RemovePost(Post entity);
+        Task<OperationResult> AddPost(Post entity);
+        Task<OperationResult> UpdatePost(Post entity);
+        Task<OperationResult> RemovePost(Post entity);
     }
 }
