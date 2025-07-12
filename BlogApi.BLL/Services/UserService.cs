@@ -25,12 +25,17 @@ namespace BlogApi.BLL.Services
 
         public async Task<User?> GetIfIsAdmin(UserDto entity)
         {
+            
             var user = await _userRepo.GetUser(entity.UserName);
 
-            if (user == null) return null;
+            if (user is null)
+            {
+                _logger.LogWarning("user is not exist");
+                return null;
+            }
 
             if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, entity.Password) == PasswordVerificationResult.Failed) return null;
-
+            _logger.LogInformation("User is authenticated");
             return user;
         }
     }
