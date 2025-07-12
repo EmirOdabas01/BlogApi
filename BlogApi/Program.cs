@@ -50,7 +50,7 @@ Log.Logger = new LoggerConfiguration()
         sinkOptions: new MSSqlServerSinkOptions
         {
             TableName = "Logs",
-            AutoCreateSqlTable = true // tablo otomatik oluþturulsun
+            AutoCreateSqlTable = true  
         },
         columnOptions: columnOptions
     )
@@ -60,7 +60,7 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+ 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -71,6 +71,8 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseMiddleware<BlogApi.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

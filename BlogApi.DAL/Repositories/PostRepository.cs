@@ -12,8 +12,8 @@ namespace BlogApi.DAL.Repositories
     public class PostRepository : IPostRepository
     {
         private readonly BlogApiContext _blogApiContext;
-
         private readonly DbSet<Post> _postDbSet;
+
         public PostRepository(BlogApiContext blogApiContext)
         {
             _blogApiContext = blogApiContext;

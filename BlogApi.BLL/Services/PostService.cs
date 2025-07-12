@@ -3,11 +3,6 @@ using BlogApi.DAL.Interfaces;
 using BlogApi.Entities.Enums;
 using BlogApi.Entities.Models;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlogApi.BLL.Services
 {
@@ -15,6 +10,7 @@ namespace BlogApi.BLL.Services
     {
         private readonly IPostRepository _postRepo;
         private readonly ILogger<PostService> _logger;
+
         public PostService(IPostRepository postRepo, ILogger<PostService> logger)
         {
             _postRepo = postRepo;
@@ -23,151 +19,99 @@ namespace BlogApi.BLL.Services
 
         public async Task<OperationResult> AddPost(Post entity)
         {
-            OperationResult Result = new();
+            OperationResult result = new();
 
-            if(entity.Blocks.Any(u =>u.PostId != entity.Id))
+            if (!Enum.IsDefined(typeof(PostType), entity.PostCategory))
             {
-                Result.Message = "post block incompatibility";
-                _logger.LogWarning(Result.Message);
-                return Result;
+                result.Message = "Invalid post category";
+                _logger.LogWarning(result.Message);
+                return result;
             }
 
             if (entity.Blocks.Any(b => !Enum.IsDefined(typeof(BlockType), b.BlockCategory)))
             {
-                Result.Message = "invalid block category";
-                _logger.LogWarning(Result.Message);
-                return Result;
+                result.Message = "Invalid block category";
+                _logger.LogWarning(result.Message);
+                return result;
             }
 
-
-            var orderedBlocks = entity.Blocks.Select(p => p.Order).ToList();
-            int min = orderedBlocks.Min();
-            int max = orderedBlocks.Max();
-
-            Result.Success = min == 0 && orderedBlocks.Count == (max - min + 1);
-            if(!Result.Success)
+            if (entity.Blocks.Any(b => b.PostId != entity.Id))
             {
-                Result.Message = "Wrong order ranking";
-                _logger.LogWarning(Result.Message);
-                return Result;
+                result.Message = "Post-block incompatibility";
+                _logger.LogWarning(result.Message);
+                return result;
             }
 
-            try
-            {
-                Result.Success = await _postRepo.AddPost(entity);
+            var orderList = entity.Blocks.Select(b => b.Order).ToList();
+            int min = orderList.Min();
+            int max = orderList.Max();
 
-                if (Result.Success)
-                {
-                    Result.Message = $"New post is created with header {entity.Header}";
-                    _logger.LogInformation(Result.Message);
-                }
-                else
-                {
-                    Result.Message = "Cannot created new post";
-                    _logger.LogWarning(Result.Message);
-                }
-            }
-            catch (Exception ex)
+            result.Success = min == 0 && orderList.Count == (max - min + 1);
+            if (!result.Success)
             {
-                Result.Message = "An exception thrown from db";
-                _logger.LogError(ex, Result.Message);
+                result.Message = "Wrong block order ranking";
+                _logger.LogWarning(result.Message);
+                return result;
             }
-            return Result;
+
+            result.Success = await _postRepo.AddPost(entity);
+            result.Message = result.Success
+                ? $"New post is created with header: {entity.Header}"
+                : "Cannot create new post";
+
+            _logger.Log(result.Success ? LogLevel.Information : LogLevel.Warning, result.Message);
+
+            return result;
         }
 
         public async Task<List<Post>> GetAllPosts()
         {
-            try
-            {
-                var posts = await _postRepo.GetAllPosts();
-
-                if(posts is not null)
-                {
-                    _logger.LogInformation("GetAllPosts is done");
-                    return posts;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An exception thrown from db");
-            }
-                return null;
+            var posts = await _postRepo.GetAllPosts();
+            _logger.LogInformation("GetAllPosts completed");
+            return posts;
         }
 
         public async Task<Post?> GetPostById(int id)
         {
             if (id < 0)
             {
-                _logger.LogWarning("invalid id value");
+                _logger.LogWarning("Invalid post ID");
                 return null;
             }
-            try
-            {
-                var post = await _postRepo.GetPostById(id);
-                
-                if(post is not null)
-                {
-                    _logger.LogInformation($"GetPostBy id is success for post with id : {post.Id}");
-                    return post;
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "An exception thrown from db");
-            }
-            return null;
+
+            var post = await _postRepo.GetPostById(id);
+            if (post != null)
+                _logger.LogInformation($"Post fetched successfully with ID: {post.Id}");
+
+            return post;
         }
 
         public async Task<OperationResult> RemovePost(Post entity)
         {
-            OperationResult Result = new();
-            try
-            {
-                Result.Success = await _postRepo.RemovePost(entity);
+            OperationResult result = new();
 
-                if (Result.Success)
-                {
-                    Result.Message = $"Removing post is done for post id with {entity.Id}";
-                    _logger.LogInformation(Result.Message);
-                }
-                else
-                {
-                    Result.Message = $"Cannot remove the post with id {entity.Id}";
-                    _logger.LogWarning(Result.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                Result.Message = "An exception thrown from db";
-                _logger.LogError(ex, Result.Message);
-            }
-            return Result;
+            result.Success = await _postRepo.RemovePost(entity);
+            result.Message = result.Success
+                ? $"Post removed with ID: {entity.Id}"
+                : $"Failed to remove post with ID: {entity.Id}";
+
+            _logger.Log(result.Success ? LogLevel.Information : LogLevel.Warning, result.Message);
+
+            return result;
         }
 
         public async Task<OperationResult> UpdatePost(Post entity)
         {
-            OperationResult Result = new();
-            try
-            {
-                Result.Success = await _postRepo.UpdatePost(entity);
+            OperationResult result = new();
 
-                if (Result.Success)
-                {
-                    Result.Message = $"Updating post is done for post id with {entity.Id}";
-                    _logger.LogInformation(Result.Message);
-                }
-                else
-                {
-                    Result.Message = $"Cannot update the post with id {entity.Id}";
-                    _logger.LogWarning(Result.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                Result.Message = "An exception thrown from db";
-                _logger.LogError(ex, Result.Message);
-            }
-            return Result;
+            result.Success = await _postRepo.UpdatePost(entity);
+            result.Message = result.Success
+                ? $"Post updated with ID: {entity.Id}"
+                : $"Failed to update post with ID: {entity.Id}";
+
+            _logger.Log(result.Success ? LogLevel.Information : LogLevel.Warning, result.Message);
+
+            return result;
         }
     }
 }
