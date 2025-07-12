@@ -3,6 +3,7 @@ using BlogApi.BLL.Interfaces;
 using BlogApi.Entities.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace BlogApi.Controllers
 {
@@ -40,25 +41,8 @@ namespace BlogApi.Controllers
         {
             if (entity == null) return BadRequest("Not valid instance");
 
-            Post post = new Post()
-            {
-                Header = entity.Header,
-                PostCategory = entity.PostCategory,
-            };
-
-            foreach (var blockDto in entity.Blocks)
-            {
-                var newBlock = new PostBlock
-                {
-                    BlockCategory = blockDto.BlockCategory,
-                    Content = blockDto.Content,
-                    ImageUrl = blockDto.ImageUrl,
-                    Order = blockDto.Order,
-                    PostId = post.Id
-                };
-
-                post.Blocks.Add(newBlock);
-            }
+            Post post = new();
+            FromDtoToPost(entity, post);
 
             var result = await _postService.AddPost(post);
 
@@ -77,25 +61,9 @@ namespace BlogApi.Controllers
             if (post == null)
                 return NotFound("Post not found");
 
-            post.Header = entity.Header;
-            post.PostCategory = entity.PostCategory;
-
             post.Blocks.Clear();
 
-            foreach (var blockDto in entity.Blocks)
-            {
-                var newBlock = new PostBlock
-                {
-                    BlockCategory = blockDto.BlockCategory,
-                    Content = blockDto.Content,
-                    ImageUrl = blockDto.ImageUrl,
-                    Order = blockDto.Order,
-                    PostId = post.Id  
-                };
-
-                post.Blocks.Add(newBlock);
-            }
-
+            FromDtoToPost(entity, post);
             var result = await _postService.UpdatePost(post);
 
             return result.Success
@@ -113,6 +81,28 @@ namespace BlogApi.Controllers
             return result.Success
                 ? Ok("Successfully deleted")
                 : BadRequest(result.Message);
+        }
+
+        [NonAction]
+        public void FromDtoToPost(PostDto entity, Post post)
+        {
+            post.Header = entity.Header;
+            post.PostCategory = entity.PostCategory;
+            
+
+            foreach (var blockDto in entity.Blocks)
+            {
+                var newBlock = new PostBlock
+                {
+                    BlockCategory = blockDto.BlockCategory,
+                    Content = blockDto.Content,
+                    ImageUrl = blockDto.ImageUrl,
+                    Order = blockDto.Order,
+                    PostId = post.Id
+                };
+
+                post.Blocks.Add(newBlock);
+            }
         }
     }
 }
