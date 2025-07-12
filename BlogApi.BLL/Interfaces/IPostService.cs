@@ -14,6 +14,7 @@ namespace BlogApi.BLL.Interfaces
         Task<Post?> GetPostById(int id);
         Task<OperationResult> AddPost(Post entity);
         Task<OperationResult> UpdatePost(Post entity);
-        Task<OperationResult> RemovePost(Post entity);
+        Task<OperationResult> RemovePost(int id);
+        OperationResult PostValidation(Post entity);
     }
 }

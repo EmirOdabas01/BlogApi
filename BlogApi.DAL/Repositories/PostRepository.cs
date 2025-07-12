@@ -33,12 +33,15 @@ namespace BlogApi.DAL.Repositories
 
         public async Task<Post?> GetPostById(int id)
         {
-            return await _postDbSet.FindAsync(id);
+            return await _postDbSet.Include(P => P.Blocks).FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<bool> RemovePost(Post entity)
+        public async Task<bool> RemovePost(int id)
         {
-            _postDbSet.Remove(entity);
+            var post = await _postDbSet.FindAsync(id);
+            if (post is null) return false;
+
+            _postDbSet.Remove(post);
             return await SaveDb();
         }
 

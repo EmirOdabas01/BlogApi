@@ -21,38 +21,8 @@ namespace BlogApi.BLL.Services
         {
             OperationResult result = new();
 
-            if (!Enum.IsDefined(typeof(PostType), entity.PostCategory))
-            {
-                result.Message = "Invalid post category";
-                _logger.LogWarning(result.Message);
-                return result;
-            }
-
-            if (entity.Blocks.Any(b => !Enum.IsDefined(typeof(BlockType), b.BlockCategory)))
-            {
-                result.Message = "Invalid block category";
-                _logger.LogWarning(result.Message);
-                return result;
-            }
-
-            if (entity.Blocks.Any(b => b.PostId != entity.Id))
-            {
-                result.Message = "Post-block incompatibility";
-                _logger.LogWarning(result.Message);
-                return result;
-            }
-
-            var orderList = entity.Blocks.Select(b => b.Order).ToList();
-            int min = orderList.Min();
-            int max = orderList.Max();
-
-            result.Success = min == 0 && orderList.Count == (max - min + 1);
-            if (!result.Success)
-            {
-                result.Message = "Wrong block order ranking";
-                _logger.LogWarning(result.Message);
-                return result;
-            }
+            result = PostValidation(entity);
+            if (!result.Success) return result;
 
             result.Success = await _postRepo.AddPost(entity);
             result.Message = result.Success
@@ -86,14 +56,54 @@ namespace BlogApi.BLL.Services
             return post;
         }
 
-        public async Task<OperationResult> RemovePost(Post entity)
+        public OperationResult PostValidation(Post entity)
         {
             OperationResult result = new();
 
-            result.Success = await _postRepo.RemovePost(entity);
+            if (!Enum.IsDefined(typeof(PostType), entity.PostCategory))
+            {
+                result.Message = "Invalid post category";
+                _logger.LogWarning(result.Message);
+                return result;
+            }
+
+            if (entity.Blocks.Any(b => !Enum.IsDefined(typeof(BlockType), b.BlockCategory)))
+            {
+                result.Message = "Invalid block category";
+                _logger.LogWarning(result.Message);
+                return result;
+            }
+
+            if (entity.Blocks.Any(b => b.PostId != entity.Id))
+            {
+                result.Message = "Post-block incompatibility";
+                _logger.LogWarning(result.Message);
+                return result;
+            }
+            //checking order ranking
+            var orderList = entity.Blocks.Select(b => b.Order).ToList();
+            int min = orderList.Min();
+            int max = orderList.Max();
+
+            result.Success = min == 0 && orderList.Count == (max - min + 1);
+            if (!result.Success)
+            {
+                result.Message = "Wrong block order ranking";
+                _logger.LogWarning(result.Message);
+                return result;
+            }
+
+            return result;
+        }
+
+        public async Task<OperationResult> RemovePost(int id)
+        {
+            OperationResult result = new();
+
+            result.Success = await _postRepo.RemovePost(id);
             result.Message = result.Success
-                ? $"Post removed with ID: {entity.Id}"
-                : $"Failed to remove post with ID: {entity.Id}";
+                ? $"Post removed with ID: {id}"
+                : $"Failed to remove post with ID: {id}";
 
             _logger.Log(result.Success ? LogLevel.Information : LogLevel.Warning, result.Message);
 
@@ -103,6 +113,9 @@ namespace BlogApi.BLL.Services
         public async Task<OperationResult> UpdatePost(Post entity)
         {
             OperationResult result = new();
+
+            result = PostValidation(entity);
+            if (!result.Success) return result;
 
             result.Success = await _postRepo.UpdatePost(entity);
             result.Message = result.Success

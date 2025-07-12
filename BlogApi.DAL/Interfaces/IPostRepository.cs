@@ -13,7 +13,7 @@ namespace BlogApi.DAL.Interfaces
         Task<Post?> GetPostById(int id);
         Task<bool> AddPost(Post entity);
         Task<bool> UpdatePost(Post entity);
-        Task<bool> RemovePost(Post entity);
+        Task<bool> RemovePost(int id);
         Task<bool> SaveDb();
     }
 }
