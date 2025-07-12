@@ -1,7 +1,9 @@
 ﻿using BlogApi.BLL.Dtos;
 using BlogApi.BLL.Interfaces;
 using BlogApi.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 
@@ -36,6 +38,7 @@ namespace BlogApi.Controllers
                 : Ok(posts);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create-post")]
         public async Task<IActionResult> CreatePost([FromBody] PostDto entity)
         {
@@ -51,6 +54,7 @@ namespace BlogApi.Controllers
                 : BadRequest(result.Message);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update-post")]
         public async Task<IActionResult> UpdatePost([FromBody] PostDto entity)
         {
@@ -71,6 +75,7 @@ namespace BlogApi.Controllers
                 : BadRequest(result.Message);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete-post/{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
@@ -83,8 +88,7 @@ namespace BlogApi.Controllers
                 : BadRequest(result.Message);
         }
 
-        [NonAction]
-        public void FromDtoToPost(PostDto entity, Post post)
+        private void FromDtoToPost(PostDto entity, Post post)
         {
             post.Header = entity.Header;
             post.PostCategory = entity.PostCategory;
