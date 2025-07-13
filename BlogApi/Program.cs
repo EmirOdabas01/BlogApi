@@ -34,7 +34,7 @@ options.UseSqlServer(connectionString));
 builder.Services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 var columnOptions = new ColumnOptions
 {
     Store = new Collection<StandardColumn>

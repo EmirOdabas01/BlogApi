@@ -22,5 +22,13 @@ namespace BlogApi.DAL.Repositories
         {
             return await _blogApiContext.Set<User>().FirstOrDefaultAsync(u => u.UserName == username);
         }
+        public async Task<User?> GetUser(int id)
+        {
+            return await _blogApiContext.Set<User>().FirstOrDefaultAsync(u => u.Id == id);
+        }
+        public async Task SaveDbForRefreshToken()
+        {
+             await _blogApiContext.SaveChangesAsync();
+        }
     }
 }
