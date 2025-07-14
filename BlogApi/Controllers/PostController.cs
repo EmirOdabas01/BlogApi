@@ -28,7 +28,7 @@ namespace BlogApi.Controllers
                 ? NotFound("This post is not exist")
                 : Ok(post);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllPosts()
         {
