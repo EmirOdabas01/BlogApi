@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BlogApi.Controllers
 {
+    [Route("post")]
     public class PostController : Controller
     {
         private readonly IPostService _postService;

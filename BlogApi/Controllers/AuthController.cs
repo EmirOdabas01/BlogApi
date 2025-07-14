@@ -14,6 +14,7 @@ using System.Text;
 
 namespace BlogApi.Controllers
 {
+    [Route("auth")]
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
