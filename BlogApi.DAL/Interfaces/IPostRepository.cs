@@ -9,11 +9,11 @@ namespace BlogApi.DAL.Interfaces
 {
     public interface IPostRepository
     {
-        Task<List<Post>> GetAllPosts();
-        Task<Post?> GetPostById(int id);
-        Task<bool> AddPost(Post entity);
-        Task<bool> UpdatePost(Post entity);
-        Task<bool> RemovePost(int id);
-        Task<bool> SaveDb();
+        Task<List<Post>> GetAllPostsAsync();
+        Task<Post?> GetPostByIdAsync(int id);
+        Task<bool> AddPostAsync(Post entity);
+        Task<bool> UpdatePostAsync(Post entity);
+        Task<bool> RemovePostAsync(int id);
+        Task<bool> SaveDbAsync();
     }
 }

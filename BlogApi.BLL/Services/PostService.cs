@@ -17,14 +17,14 @@ namespace BlogApi.BLL.Services
             _logger = logger;
         }
 
-        public async Task<OperationResult> AddPost(Post entity)
+        public async Task<OperationResult> AddPostAsync(Post entity)
         {
             OperationResult result = new();
 
             result = PostValidation(entity);
             if (!result.Success) return result;
 
-            result.Success = await _postRepo.AddPost(entity);
+            result.Success = await _postRepo.AddPostAsync(entity);
             result.Message = result.Success
                 ? $"New post is created with header: {entity.Header}"
                 : "Cannot create new post";
@@ -34,14 +34,14 @@ namespace BlogApi.BLL.Services
             return result;
         }
 
-        public async Task<List<Post>> GetAllPosts()
+        public async Task<List<Post>> GetAllPostsAsync()
         {
-            var posts = await _postRepo.GetAllPosts();
+            var posts = await _postRepo.GetAllPostsAsync();
             _logger.LogInformation("GetAllPosts completed");
             return posts;
         }
 
-        public async Task<Post?> GetPostById(int id)
+        public async Task<Post?> GetPostByIdAsync(int id)
         {
             if (id < 0)
             {
@@ -49,7 +49,7 @@ namespace BlogApi.BLL.Services
                 return null;
             }
 
-            var post = await _postRepo.GetPostById(id);
+            var post = await _postRepo.GetPostByIdAsync(id);
             if (post != null)
                 _logger.LogInformation($"Post fetched successfully with ID: {post.Id}");
 
@@ -96,11 +96,11 @@ namespace BlogApi.BLL.Services
             return result;
         }
 
-        public async Task<OperationResult> RemovePost(int id)
+        public async Task<OperationResult> RemovePostAsync(int id)
         {
             OperationResult result = new();
 
-            result.Success = await _postRepo.RemovePost(id);
+            result.Success = await _postRepo.RemovePostAsync(id);
             result.Message = result.Success
                 ? $"Post removed with ID: {id}"
                 : $"Failed to remove post with ID: {id}";
@@ -110,14 +110,14 @@ namespace BlogApi.BLL.Services
             return result;
         }
 
-        public async Task<OperationResult> UpdatePost(Post entity)
+        public async Task<OperationResult> UpdatePostAsync(Post entity)
         {
             OperationResult result = new();
 
             result = PostValidation(entity);
             if (!result.Success) return result;
 
-            result.Success = await _postRepo.UpdatePost(entity);
+            result.Success = await _postRepo.UpdatePostAsync(entity);
             result.Message = result.Success
                 ? $"Post updated with ID: {entity.Id}"
                 : $"Failed to update post with ID: {entity.Id}";

@@ -26,21 +26,21 @@ namespace BlogApi.Controllers
         }
 
         [HttpPost("admin-login")]
-        public async Task<ActionResult<TokenResponseDto?>> Login([FromBody] UserDto entity)
+        public async Task<ActionResult<TokenResponseDto?>> LoginAsync([FromBody] UserDto entity)
         {
-            var user = await _authService.GetIfIsAdmin(entity);
+            var user = await _authService.GetIfIsAdminAsync(entity);
 
             if (user is null)
                 return BadRequest("Wrong username or password");
             
-            var result = await _authService.GenerateTokens(user);
+            var result = await _authService.GenerateTokensAsync(user);
             return Ok(result);
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string?>> RefreshToken(RefreshTokenRequestDto request)
+        public async Task<ActionResult<string?>> RefreshTokenAsync(RefreshTokenRequestDto request)
         {
-            var result = await _authService.RefreshToken(request);
+            var result = await _authService.RefreshTokenAsync(request);
 
             if (result is null || result.RefreshToken is null || result.AccessToken is null)
                 return Unauthorized("Invalid refresh token");

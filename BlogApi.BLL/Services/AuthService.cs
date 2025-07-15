@@ -30,10 +30,10 @@ namespace BlogApi.BLL.Services
             _configuration = configuration;
         }
 
-        public async Task<User?> GetIfIsAdmin(UserDto entity)
+        public async Task<User?> GetIfIsAdminAsync(UserDto entity)
         {
             
-            var user = await _userRepo.GetUser(entity.UserName);
+            var user = await _userRepo.GetUserAsync(entity.UserName);
 
             if (user is null)
             {
@@ -45,39 +45,39 @@ namespace BlogApi.BLL.Services
             _logger.LogInformation("User is authenticated");
             return user;
         }
-        public async Task<TokenResponseDto?> GenerateTokens(User user)
+        public async Task<TokenResponseDto?> GenerateTokensAsync(User user)
         {
             TokenResponseDto token = new()
             {
                 AccessToken = CreateAccessToken(user),
-                RefreshToken = await GenerateAndSaveRefreshToken(user)
+                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
             };
 
             return token;
         }
 
-        public async Task<TokenResponseDto?> RefreshToken(RefreshTokenRequestDto request)
+        public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
         {
-            var user = await ValidateRefreshToken(request.UserId, request.RefreshToken);
+            var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
             if (user is null) return null;
 
-            return await GenerateTokens(user);
+            return await GenerateTokensAsync(user);
         }
 
-        private async Task<User?> ValidateRefreshToken(int userId, string refreshToken)
+        private async Task<User?> ValidateRefreshTokenAsync(int userId, string refreshToken)
         {
-            var user = await _userRepo.GetUser(userId);
+            var user = await _userRepo.GetUserAsync(userId);
             if (user is null || user.RefreshToken != refreshToken ||
                 user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                 return null;
             return user;
         }
-        private async Task<string> GenerateAndSaveRefreshToken(User user)
+        private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
         {
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _userRepo.SaveDbForRefreshToken();
+            await _userRepo.SaveDbForRefreshTokenAsync();
             return refreshToken;
         }
         private string GenerateRefreshToken()

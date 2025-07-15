@@ -21,18 +21,18 @@ namespace BlogApi.Controllers
         }
 
         [HttpGet("get-post/{id}")]
-        public async Task<IActionResult> GetPostById(int id)
+        public async Task<IActionResult> GetPostByIdAsync(int id)
         {
-            var post = await _postService.GetPostById(id);
+            var post = await _postService.GetPostByIdAsync(id);
             return post is null
                 ? NotFound("This post is not exist")
                 : Ok(post);
         }
-        [Authorize(Roles = "Admin")]
+   
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllPosts()
+        public async Task<IActionResult> GetAllPostsAsync()
         {
-            var posts = await _postService.GetAllPosts();
+            var posts = await _postService.GetAllPostsAsync();
 
             return posts is null || !posts.Any()
                 ? NotFound("There is no post exist")
@@ -41,14 +41,14 @@ namespace BlogApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("create-post")]
-        public async Task<IActionResult> CreatePost([FromBody] PostDto entity)
+        public async Task<IActionResult> CreatePostAsync([FromBody] PostDto entity)
         {
             if (entity == null) return BadRequest("Not valid instance");
 
             Post post = new();
             FromDtoToPost(entity, post);
 
-            var result = await _postService.AddPost(post);
+            var result = await _postService.AddPostAsync(post);
 
             return result.Success
                 ? Ok("New post is created")
@@ -57,19 +57,19 @@ namespace BlogApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("update-post")]
-        public async Task<IActionResult> UpdatePost([FromBody] PostDto entity)
+        public async Task<IActionResult> UpdatePostAsync([FromBody] PostDto entity)
         {
             if (entity == null || entity.Id == null)
                 return BadRequest("Not valid instance");
 
-            var post = await _postService.GetPostById(Convert.ToInt32(entity.Id));
+            var post = await _postService.GetPostByIdAsync(Convert.ToInt32(entity.Id));
             if (post == null)
                 return NotFound("Post not found");
 
             post.Blocks.Clear();
 
             FromDtoToPost(entity, post);
-            var result = await _postService.UpdatePost(post);
+            var result = await _postService.UpdatePostAsync(post);
 
             return result.Success
                 ? Ok("Successfully updated")
@@ -78,11 +78,11 @@ namespace BlogApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete-post/{id}")]
-        public async Task<IActionResult> DeletePost(int id)
+        public async Task<IActionResult> DeletePostAsync(int id)
         {
             if (id < 0) return BadRequest("Invalid id");
 
-            var result = await _postService.RemovePost(id);
+            var result = await _postService.RemovePostAsync(id);
 
             return result.Success
                 ? Ok("Successfully deleted")

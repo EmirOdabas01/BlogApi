@@ -9,9 +9,9 @@ namespace BlogApi.DAL.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User?> GetUser(string username);
-        Task<User?> GetUser(int id);
+        Task<User?> GetUserAsync(string username);
+        Task<User?> GetUserAsync(int id);
 
-        public Task SaveDbForRefreshToken();
+        public Task SaveDbForRefreshTokenAsync();
     }
 }

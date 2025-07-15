@@ -10,8 +10,8 @@ namespace BlogApi.BLL.Interfaces
 {
     public interface IAuthService
     {
-        Task<User?> GetIfIsAdmin(UserDto entity);
-        Task<TokenResponseDto?> RefreshToken(RefreshTokenRequestDto request);
-        Task<TokenResponseDto?> GenerateTokens(User user);
+        Task<User?> GetIfIsAdminAsync(UserDto entity);
+        Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request);
+        Task<TokenResponseDto?> GenerateTokensAsync(User user);
     }
 }

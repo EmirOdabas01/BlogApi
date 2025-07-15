@@ -20,40 +20,40 @@ namespace BlogApi.DAL.Repositories
             _postDbSet = _blogApiContext.Set<Post>();
         }
 
-        public async Task<bool> AddPost(Post entity)
+        public async Task<bool> AddPostAsync(Post entity)
         {
             await _postDbSet.AddAsync(entity);
-            return await SaveDb();
+            return await SaveDbAsync();
         }
 
-        public async Task<List<Post>> GetAllPosts()
+        public async Task<List<Post>> GetAllPostsAsync()
         {
             return await _postDbSet.Include(p => p.Blocks).ToListAsync();
         }
 
-        public async Task<Post?> GetPostById(int id)
+        public async Task<Post?> GetPostByIdAsync(int id)
         {
             return await _postDbSet.Include(P => P.Blocks).FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<bool> RemovePost(int id)
+        public async Task<bool> RemovePostAsync(int id)
         {
             var post = await _postDbSet.FindAsync(id);
             if (post is null) return false;
 
             _postDbSet.Remove(post);
-            return await SaveDb();
+            return await SaveDbAsync();
         }
 
-        public async Task<bool> SaveDb()
+        public async Task<bool> SaveDbAsync()
         {
             return await _blogApiContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdatePost(Post entity)
+        public async Task<bool> UpdatePostAsync(Post entity)
         {
             _postDbSet.Update(entity);
-            return await SaveDb();
+            return await SaveDbAsync();
         }
     }
 }
