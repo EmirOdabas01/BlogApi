@@ -1,6 +1,5 @@
 ﻿using BlogApi.BLL.Dtos;
 using BlogApi.BLL.Interfaces;
-using BlogApi.Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -45,10 +44,7 @@ namespace BlogApi.Controllers
         {
             if (entity == null) return BadRequest("Not valid instance");
 
-            Post post = new();
-            FromDtoToPost(entity, post);
-
-            var result = await _postService.AddPostAsync(post);
+            var result = await _postService.AddPostAsync(entity);
 
             return result.Success
                 ? Ok("New post is created")
@@ -62,14 +58,7 @@ namespace BlogApi.Controllers
             if (entity == null || entity.Id == null)
                 return BadRequest("Not valid instance");
 
-            var post = await _postService.GetPostByIdAsync(Convert.ToInt32(entity.Id));
-            if (post == null)
-                return NotFound("Post not found");
-
-            post.Blocks.Clear();
-
-            FromDtoToPost(entity, post);
-            var result = await _postService.UpdatePostAsync(post);
+            var result = await _postService.UpdatePostAsync(entity);
 
             return result.Success
                 ? Ok("Successfully updated")
@@ -87,27 +76,6 @@ namespace BlogApi.Controllers
             return result.Success
                 ? Ok("Successfully deleted")
                 : BadRequest(result.Message);
-        }
-
-        private void FromDtoToPost(PostDto entity, Post post)
-        {
-            post.Header = entity.Header;
-            post.PostCategory = entity.PostCategory;
-            
-
-            foreach (var blockDto in entity.Blocks)
-            {
-                var newBlock = new PostBlock
-                {
-                    BlockCategory = blockDto.BlockCategory,
-                    Content = blockDto.Content,
-                    ImageUrl = blockDto.ImageUrl,
-                    Order = blockDto.Order,
-                    PostId = post.Id
-                };
-
-                post.Blocks.Add(newBlock);
-            }
         }
     }
 }

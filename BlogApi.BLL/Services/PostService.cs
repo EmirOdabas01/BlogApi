@@ -1,4 +1,5 @@
-﻿using BlogApi.BLL.Interfaces;
+﻿using BlogApi.BLL.Dtos;
+using BlogApi.BLL.Interfaces;
 using BlogApi.DAL.Interfaces;
 using BlogApi.Entities.Enums;
 using BlogApi.Entities.Models;
@@ -17,14 +18,17 @@ namespace BlogApi.BLL.Services
             _logger = logger;
         }
 
-        public async Task<OperationResult> AddPostAsync(Post entity)
+        public async Task<OperationResult> AddPostAsync(PostDto entity)
         {
             OperationResult result = new();
 
-            result = PostValidation(entity);
+            Post post = new();
+            FromDtoToPost(entity, post);
+
+            result = PostValidation(post);
             if (!result.Success) return result;
 
-            result.Success = await _postRepo.AddPostAsync(entity);
+            result.Success = await _postRepo.AddPostAsync(post);
             result.Message = result.Success
                 ? $"New post is created with header: {entity.Header}"
                 : "Cannot create new post";
@@ -56,7 +60,7 @@ namespace BlogApi.BLL.Services
             return post;
         }
 
-        public OperationResult PostValidation(Post entity)
+        private OperationResult PostValidation(Post entity)
         {
             OperationResult result = new();
 
@@ -110,14 +114,26 @@ namespace BlogApi.BLL.Services
             return result;
         }
 
-        public async Task<OperationResult> UpdatePostAsync(Post entity)
+        public async Task<OperationResult> UpdatePostAsync(PostDto entity)
         {
             OperationResult result = new();
 
-            result = PostValidation(entity);
+
+            var post = await _postRepo.GetPostByIdAsync(Convert.ToInt32(entity.Id));
+            if (post == null)
+            {
+                result.Message = "Post not found";
+                return result;
+            }
+
+            post.Blocks.Clear();
+
+            FromDtoToPost(entity, post);
+
+            result = PostValidation(post);
             if (!result.Success) return result;
 
-            result.Success = await _postRepo.UpdatePostAsync(entity);
+            result.Success = await _postRepo.UpdatePostAsync(post);
             result.Message = result.Success
                 ? $"Post updated with ID: {entity.Id}"
                 : $"Failed to update post with ID: {entity.Id}";
@@ -125,6 +141,27 @@ namespace BlogApi.BLL.Services
             _logger.Log(result.Success ? LogLevel.Information : LogLevel.Warning, result.Message);
 
             return result;
+        }
+
+        private void FromDtoToPost(PostDto entity, Post post)
+        {
+            post.Header = entity.Header;
+            post.PostCategory = entity.PostCategory;
+
+
+            foreach (var blockDto in entity.Blocks)
+            {
+                var newBlock = new PostBlock
+                {
+                    BlockCategory = blockDto.BlockCategory,
+                    Content = blockDto.Content,
+                    ImageUrl = blockDto.ImageUrl,
+                    Order = blockDto.Order,
+                    PostId = post.Id
+                };
+
+                post.Blocks.Add(newBlock);
+            }
         }
     }
 }
