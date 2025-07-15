@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BlogApi.Controllers
 {
-    [Route("post")]
+    [Route("api/post")]
     public class PostController : Controller
     {
         private readonly IPostService _postService;
@@ -20,7 +20,7 @@ namespace BlogApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("get-post/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetPostByIdAsync(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -40,7 +40,7 @@ namespace BlogApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("create-post")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreatePostAsync([FromBody] PostDto entity)
         {
             if (entity == null) return BadRequest("Not valid instance");
@@ -56,7 +56,7 @@ namespace BlogApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("update-post")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdatePostAsync([FromBody] PostDto entity)
         {
             if (entity == null || entity.Id == null)
@@ -77,7 +77,7 @@ namespace BlogApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("delete-post/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeletePostAsync(int id)
         {
             if (id < 0) return BadRequest("Invalid id");
