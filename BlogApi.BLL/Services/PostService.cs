@@ -163,5 +163,11 @@ namespace BlogApi.BLL.Services
                 post.Blocks.Add(newBlock);
             }
         }
+
+        public async Task<List<Post>> GetAllPostByCategoryAsync(PostType category)
+        {
+            if (!Enum.IsDefined(typeof(PostType), category)) return new();
+            return await _postRepo.GetAllByCategoryAsync(p => p.PostCategory == category);
+        }
     }
 }

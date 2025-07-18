@@ -11,7 +11,6 @@ namespace BlogApi.DAL.Interfaces
     {
         Task<User?> GetUserAsync(string username);
         Task<User?> GetUserAsync(int id);
-
-        public Task SaveDbForRefreshTokenAsync();
+        Task SaveDbForRefreshTokenAsync();
     }
 }

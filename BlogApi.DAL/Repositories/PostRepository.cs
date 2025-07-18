@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,10 @@ namespace BlogApi.DAL.Repositories
             return await SaveDbAsync();
         }
 
+        public async Task<List<Post>> GetAllByCategoryAsync(Expression<Func<Post, bool>> expression)
+        {
+            return await _postDbSet.Include(p => p.Blocks).Where(expression).ToListAsync();
+        }
         public async Task<List<Post>> GetAllPostsAsync()
         {
             return await _postDbSet.Include(p => p.Blocks).ToListAsync();

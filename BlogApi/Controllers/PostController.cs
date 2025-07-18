@@ -1,5 +1,6 @@
 ﻿using BlogApi.BLL.Dtos;
 using BlogApi.BLL.Interfaces;
+using BlogApi.Entities.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -76,6 +77,16 @@ namespace BlogApi.Controllers
             return result.Success
                 ? Ok("Successfully deleted")
                 : BadRequest(result.Message);
+        }
+
+        [HttpGet("get-category/{category}")]
+        public async Task<IActionResult> GetAboutAsync(PostType category)
+        {
+            var posts = await _postService.GetAllPostByCategoryAsync(category);
+
+            return posts is null || !posts.Any()
+                ? NotFound("There is no post exist")
+                : Ok(posts);
         }
     }
 }
