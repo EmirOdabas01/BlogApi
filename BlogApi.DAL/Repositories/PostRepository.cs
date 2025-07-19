@@ -1,4 +1,5 @@
 ﻿using BlogApi.DAL.Interfaces;
+using BlogApi.Entities.Enums;
 using BlogApi.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -33,7 +34,14 @@ namespace BlogApi.DAL.Repositories
         }
         public async Task<List<Post>> GetAllPostsAsync()
         {
-            return await _postDbSet.Include(p => p.Blocks).ToListAsync();
+            return await _postDbSet.Include(p => p.Blocks).
+                Where(p => p.PostCategory == PostType.Technology || p.PostCategory == PostType.Blog)
+                .ToListAsync();
+        }
+
+        public async Task<Post?> GetPostByCategoryAsync(PostType category)
+        {
+            return await _postDbSet.Include(p => p.Blocks).FirstOrDefaultAsync(post => post.PostCategory == category);
         }
 
         public async Task<Post?> GetPostByIdAsync(int id)

@@ -30,7 +30,7 @@ namespace BlogApi.Controllers
         }
    
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllPostsAsync()
+        public async Task<IActionResult> GetAllPostsAsync() // just for 2 category Blog, Technology
         {
             var posts = await _postService.GetAllPostsAsync();
 
@@ -66,7 +66,7 @@ namespace BlogApi.Controllers
                 : BadRequest(result.Message);
         }
 
-        [Authorize(Roles = "Admin")]
+      ///  [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeletePostAsync(int id)
         {
@@ -82,11 +82,20 @@ namespace BlogApi.Controllers
         [HttpGet("get-category/{category}")]
         public async Task<IActionResult> GetAboutAsync(PostType category)
         {
-            var posts = await _postService.GetAllPostByCategoryAsync(category);
-
-            return posts is null || !posts.Any()
-                ? NotFound("There is no post exist")
-                : Ok(posts);
+            if (category == PostType.About)
+            {
+                var post = await _postService.GetPostByCategoryAsync(category);
+                return post is null
+                    ? NotFound("There is no post exist")
+                    : Ok(post);
+            }
+            else
+            {
+                var posts = await _postService.GetAllPostByCategoryAsync(category);
+                return posts is null || !posts.Any()
+                    ? NotFound("There is no post exist")
+                    : Ok(posts);
+            }
         }
     }
 }

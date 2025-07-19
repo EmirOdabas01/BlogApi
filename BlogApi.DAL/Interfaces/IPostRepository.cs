@@ -13,6 +13,7 @@ namespace BlogApi.DAL.Interfaces
     {
         Task<List<Post>> GetAllPostsAsync();
         Task<List<Post>> GetAllByCategoryAsync(Expression<Func<Post, bool>> expression);
+        Task<Post?> GetPostByCategoryAsync(PostType category);
         Task<Post?> GetPostByIdAsync(int id);
         Task<bool> AddPostAsync(Post entity);
         Task<bool> UpdatePostAsync(Post entity);

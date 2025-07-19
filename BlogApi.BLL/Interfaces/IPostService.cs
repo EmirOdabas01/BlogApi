@@ -13,6 +13,7 @@ namespace BlogApi.BLL.Interfaces
     {
         Task<List<Post>> GetAllPostsAsync();
         Task<List<Post>> GetAllPostByCategoryAsync(PostType category);
+        Task<Post?> GetPostByCategoryAsync(PostType category);
         Task<Post?> GetPostByIdAsync(int id);
         Task<OperationResult> AddPostAsync(PostDto entity);
         Task<OperationResult> UpdatePostAsync(PostDto entity);
