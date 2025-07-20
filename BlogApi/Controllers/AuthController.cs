@@ -38,14 +38,14 @@ namespace BlogApi.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string?>> RefreshTokenAsync(RefreshTokenRequestDto request)
+        public async Task<ActionResult<TokenResponseDto?>> RefreshTokenAsync([FromBody] RefreshTokenRequestDto request)
         {
             var result = await _authService.RefreshTokenAsync(request);
 
             if (result is null || result.RefreshToken is null || result.AccessToken is null)
                 return Unauthorized("Invalid refresh token");
 
-            return Ok(result.AccessToken);
+            return Ok(result);
         }
        
     }

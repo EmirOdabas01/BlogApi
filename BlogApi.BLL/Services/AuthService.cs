@@ -49,6 +49,7 @@ namespace BlogApi.BLL.Services
         {
             TokenResponseDto token = new()
             {
+                UserId = user.Id,
                 AccessToken = CreateAccessToken(user),
                 RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
             };
@@ -108,7 +109,6 @@ namespace BlogApi.BLL.Services
                signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(tokendescriptor);
-
         }
     }
 }
